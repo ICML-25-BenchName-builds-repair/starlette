@@ -19,9 +19,9 @@ class OpenAPIResponse(Response):
 
     def render(self, content: typing.Any) -> bytes:
         assert yaml is not None, "`pyyaml` must be installed to use OpenAPIResponse."
-        assert isinstance(
-            content, dict
-        ), "The schema passed to OpenAPIResponse should be a dictionary."
+        assert isinstance(content, dict), (
+            "The schema passed to OpenAPIResponse should be a dictionary."
+        )
         return yaml.dump(content, default_flow_style=False).encode("utf-8")
 
 

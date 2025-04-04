@@ -456,16 +456,14 @@ def test_decorator_deprecations() -> None:
         )
     ) as record:
 
-        async def middleware(request, call_next):
-            ...  # pragma: no cover
+        async def middleware(request, call_next): ...  # pragma: no cover
 
         app.middleware("http")(middleware)
         assert len(record) == 1
 
     with pytest.deprecated_call(
         match=(
-            "The `route` decorator is deprecated, "
-            "and will be removed in version 1.0.0."
+            "The `route` decorator is deprecated, and will be removed in version 1.0.0."
         )
     ) as record:
         app.route("/")(async_homepage)
@@ -487,8 +485,7 @@ def test_decorator_deprecations() -> None:
         )
     ) as record:
 
-        async def startup():
-            ...  # pragma: no cover
+        async def startup(): ...  # pragma: no cover
 
         app.on_event("startup")(startup)
         assert len(record) == 1

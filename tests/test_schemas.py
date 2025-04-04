@@ -138,7 +138,7 @@ def test_schema_generation():
                 "get": {
                     "responses": {
                         200: {
-                            "description": "A list of " "organisations.",
+                            "description": "A list of organisations.",
                             "examples": [{"name": "Foo Corp."}, {"name": "Acme Ltd."}],
                         }
                     }

@@ -498,7 +498,7 @@ def test_too_many_fields_raise(app, expectation, test_client_factory):
     fields = []
     for i in range(1001):
         fields.append(
-            "--B\r\n" f'Content-Disposition: form-data; name="N{i}";\r\n\r\n' "\r\n"
+            f'--B\r\nContent-Disposition: form-data; name="N{i}";\r\n\r\n\r\n'
         )
     data = "".join(fields).encode("utf-8")
     with expectation:
@@ -584,7 +584,7 @@ def test_too_many_files_and_fields_raise(app, expectation, test_client_factory):
             "\r\n"
         )
         fields.append(
-            "--B\r\n" f'Content-Disposition: form-data; name="N{i}";\r\n\r\n' "\r\n"
+            f'--B\r\nContent-Disposition: form-data; name="N{i}";\r\n\r\n\r\n'
         )
     data = "".join(fields).encode("utf-8")
     with expectation:
@@ -612,7 +612,7 @@ def test_max_fields_is_customizable_low_raises(app, expectation, test_client_fac
     fields = []
     for i in range(2):
         fields.append(
-            "--B\r\n" f'Content-Disposition: form-data; name="N{i}";\r\n\r\n' "\r\n"
+            f'--B\r\nContent-Disposition: form-data; name="N{i}";\r\n\r\n\r\n'
         )
     data = "".join(fields).encode("utf-8")
     with expectation:
@@ -660,7 +660,7 @@ def test_max_fields_is_customizable_high(test_client_factory):
     fields = []
     for i in range(2000):
         fields.append(
-            "--B\r\n" f'Content-Disposition: form-data; name="N{i}";\r\n\r\n' "\r\n"
+            f'--B\r\nContent-Disposition: form-data; name="N{i}";\r\n\r\n\r\n'
         )
         fields.append(
             "--B\r\n"

@@ -24,13 +24,11 @@ AwaitableCallable = typing.Callable[..., typing.Awaitable[T]]
 
 
 @typing.overload
-def is_async_callable(obj: AwaitableCallable[T]) -> TypeGuard[AwaitableCallable[T]]:
-    ...
+def is_async_callable(obj: AwaitableCallable[T]) -> TypeGuard[AwaitableCallable[T]]: ...
 
 
 @typing.overload
-def is_async_callable(obj: typing.Any) -> TypeGuard[AwaitableCallable[typing.Any]]:
-    ...
+def is_async_callable(obj: typing.Any) -> TypeGuard[AwaitableCallable[typing.Any]]: ...
 
 
 def is_async_callable(obj: typing.Any) -> typing.Any:
@@ -47,13 +45,11 @@ T_co = typing.TypeVar("T_co", covariant=True)
 
 class AwaitableOrContextManager(
     typing.Awaitable[T_co], typing.AsyncContextManager[T_co], typing.Protocol[T_co]
-):
-    ...
+): ...
 
 
 class SupportsAsyncClose(typing.Protocol):
-    async def close(self) -> None:
-        ...  # pragma: no cover
+    async def close(self) -> None: ...  # pragma: no cover
 
 
 SupportsAsyncCloseType = typing.TypeVar(
@@ -74,7 +70,7 @@ class AwaitableOrContextManagerWrapper(typing.Generic[SupportsAsyncCloseType]):
         self.entered = await self.aw
         return self.entered
 
-    async def __aexit__(self, *args: typing.Any) -> None | bool:
+    async def __aexit__(self, *args: typing.Any) -> typing.Optional[bool]:
         await self.entered.close()
         return None
 

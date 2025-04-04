@@ -66,9 +66,9 @@ class Starlette:
     ) -> None:
         # The lifespan context function is a newer style that replaces
         # on_startup / on_shutdown handlers. Use one or the other, not both.
-        assert lifespan is None or (
-            on_startup is None and on_shutdown is None
-        ), "Use either 'lifespan' or 'on_startup'/'on_shutdown', not both."
+        assert lifespan is None or (on_startup is None and on_shutdown is None), (
+            "Use either 'lifespan' or 'on_startup'/'on_shutdown', not both."
+        )
 
         self.debug = debug
         self.state = State()
@@ -255,9 +255,9 @@ class Starlette:
             "Refer to https://www.starlette.io/middleware/#using-middleware for recommended approach.",  # noqa: E501
             DeprecationWarning,
         )
-        assert (
-            middleware_type == "http"
-        ), 'Currently only middleware("http") is supported.'
+        assert middleware_type == "http", (
+            'Currently only middleware("http") is supported.'
+        )
 
         def decorator(func: typing.Callable) -> typing.Callable:  # type: ignore[type-arg]  # noqa: E501
             self.add_middleware(BaseHTTPMiddleware, dispatch=func)
