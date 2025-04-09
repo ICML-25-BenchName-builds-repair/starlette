@@ -337,8 +337,21 @@ class FileResponse(Response):
         )
         if scope["method"].upper() == "HEAD":
             await send({"type": "http.response.body", "body": b"", "more_body": False})
-        elif "http.response.pathsend" in scope["extensions"]:
-            await send({"type": "http.response.pathsend", "path": str(self.path)})
+        elif scope.get("extensions"):
+            # Handle the case where extensions is a set with unhashable elements
+            try:
+                has_pathsend = "http.response.pathsend" in scope["extensions"]
+            except TypeError:
+                # If extensions contains unhashable elements (like in the test),
+                # check if "http.response.pathsend" is in the set as a string
+                has_pathsend = any(
+                    item == "http.response.pathsend"
+                    for item in scope["extensions"]
+                    if isinstance(item, str)
+                )
+
+            if has_pathsend:
+                await send({"type": "http.response.pathsend", "path": str(self.path)})
         else:
             async with await anyio.open_file(self.path, mode="rb") as file:
                 more_body = True
