@@ -409,7 +409,7 @@ class TestClient(httpx.Client):
         if headers is None:
             headers = {}
         headers.setdefault("user-agent", "testclient")
-        super().__init__(
+        super().__init__(  # type: ignore[call-arg]
             app=self.app,
             base_url=base_url,
             headers=headers,
