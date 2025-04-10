@@ -16,7 +16,7 @@ P = ParamSpec("P")
 T = typing.TypeVar("T")
 
 
-async def run_until_first_complete(*args: tuple[typing.Callable | dict]) -> None:  # type: ignore[type-arg]  # noqa: E501
+async def run_until_first_complete(*args: typing.Any) -> None:
     warnings.warn(
         "run_until_first_complete is deprecated "
         "and will be removed in a future version.",
@@ -29,8 +29,10 @@ async def run_until_first_complete(*args: tuple[typing.Callable | dict]) -> None
             await func()
             task_group.cancel_scope.cancel()
 
-        for func, kwargs in args:
-            task_group.start_soon(run, functools.partial(func, **kwargs))
+        for item in args:
+            if len(item) == 2:
+                func, kwargs = item
+                task_group.start_soon(run, functools.partial(func, **kwargs))
 
 
 async def run_in_threadpool(

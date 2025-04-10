@@ -9,11 +9,15 @@ from urllib.parse import unquote_plus
 from starlette.datastructures import FormData, Headers, UploadFile
 
 try:
-    import multipart
-    from multipart.multipart import parse_options_header
+    import python_multipart as multipart
+    from python_multipart.multipart import parse_options_header
 except ModuleNotFoundError:  # pragma: nocover
-    parse_options_header = None
-    multipart = None
+    try:
+        import multipart  # type: ignore
+        from multipart.multipart import parse_options_header  # type: ignore
+    except ModuleNotFoundError:  # pragma: nocover
+        parse_options_header = None  # type: ignore
+        multipart = None  # type: ignore
 
 
 class FormMessage(Enum):
@@ -87,7 +91,7 @@ class FormParser:
         }
 
         # Create the parser.
-        parser = multipart.QuerystringParser(callbacks)
+        parser = multipart.QuerystringParser(callbacks)  # type: ignore
         field_name = b""
         field_value = b""
 
@@ -250,7 +254,7 @@ class MultiPartParser:
         }
 
         # Create the parser.
-        parser = multipart.MultipartParser(boundary, callbacks)
+        parser = multipart.MultipartParser(boundary, callbacks)  # type: ignore
         try:
             # Feed the parser with data from the request.
             async for chunk in self.stream:

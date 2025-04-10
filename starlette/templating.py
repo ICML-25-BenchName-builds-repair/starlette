@@ -66,12 +66,15 @@ class Jinja2Templates:
     @typing.overload
     def __init__(
         self,
-        directory: str
-        | PathLike[typing.AnyStr]
-        | typing.Sequence[str | PathLike[typing.AnyStr]],
+        directory: typing.Union[
+            str,
+            PathLike[str],
+            typing.Sequence[typing.Union[str, PathLike[str]]],
+        ],
         *,
-        context_processors: list[typing.Callable[[Request], dict[str, typing.Any]]]
-        | None = None,
+        context_processors: typing.Optional[
+            typing.List[typing.Callable[[Request], typing.Dict[str, typing.Any]]]
+        ] = None,
         **env_options: typing.Any,
     ) -> None:
         ...
@@ -81,21 +84,25 @@ class Jinja2Templates:
         self,
         *,
         env: jinja2.Environment,
-        context_processors: list[typing.Callable[[Request], dict[str, typing.Any]]]
-        | None = None,
+        context_processors: typing.Optional[
+            typing.List[typing.Callable[[Request], typing.Dict[str, typing.Any]]]
+        ] = None,
     ) -> None:
         ...
 
     def __init__(
         self,
-        directory: str
-        | PathLike[typing.AnyStr]
-        | typing.Sequence[str | PathLike[typing.AnyStr]]
-        | None = None,
+        directory: typing.Union[
+            str,
+            PathLike[str],
+            typing.Sequence[typing.Union[str, PathLike[str]]],
+            None,
+        ] = None,
         *,
-        context_processors: list[typing.Callable[[Request], dict[str, typing.Any]]]
-        | None = None,
-        env: jinja2.Environment | None = None,
+        context_processors: typing.Optional[
+            typing.List[typing.Callable[[Request], typing.Dict[str, typing.Any]]]
+        ] = None,
+        env: typing.Optional[jinja2.Environment] = None,
         **env_options: typing.Any,
     ) -> None:
         if env_options:
@@ -115,9 +122,11 @@ class Jinja2Templates:
 
     def _create_env(
         self,
-        directory: str
-        | PathLike[typing.AnyStr]
-        | typing.Sequence[str | PathLike[typing.AnyStr]],
+        directory: typing.Union[
+            str,
+            PathLike[str],
+            typing.Sequence[typing.Union[str, PathLike[str]]],
+        ],
         **env_options: typing.Any,
     ) -> jinja2.Environment:
         loader = jinja2.FileSystemLoader(directory)

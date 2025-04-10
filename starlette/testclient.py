@@ -410,10 +410,9 @@ class TestClient(httpx.Client):
             headers = {}
         headers.setdefault("user-agent", "testclient")
         super().__init__(
-            app=self.app,
+            transport=transport,
             base_url=base_url,
             headers=headers,
-            transport=transport,
             follow_redirects=follow_redirects,
             cookies=cookies,
         )
