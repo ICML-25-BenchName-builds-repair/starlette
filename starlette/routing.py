@@ -421,26 +421,57 @@ class Mount(BaseRoute):
             path = scope["path"]
             root_path = scope.get("route_root_path", scope.get("root_path", ""))
             route_path = scope.get("route_path", re.sub(r"^" + root_path, "", path))
-            mount_match = self.path_regex.match(route_path)
-            path_match = self.routes == [] or any(
-                [route.matches(scope)[0] == Match.FULL for route in self.routes]
-            )
-            if mount_match and path_match:
-                matched_params = mount_match.groupdict()
-                for key, value in matched_params.items():
-                    matched_params[key] = self.param_convertors[key].convert(value)
-                remaining_path = "/" + matched_params.pop("path")
-                matched_path = route_path[: -len(remaining_path)]
+
+            # Check if the route_path starts with the mount path
+            # This is a simpler check that doesn't rely on regex matching
+            if (
+                self.path == ""
+                or route_path == self.path
+                or route_path.startswith(self.path + "/")
+            ):
+                if self.path == "":
+                    remaining_path = route_path
+                    matched_path = ""
+                else:
+                    remaining_path = route_path[len(self.path) :] or "/"
+                    matched_path = self.path
+
                 path_params = dict(scope.get("path_params", {}))
-                path_params.update(matched_params)
                 root_path = scope.get("root_path", "")
+
+                # Create a modified scope for route matching
+                route_scope = dict(scope)
+                route_scope["path"] = remaining_path
+                route_scope["root_path"] = root_path + matched_path
+
+                # For empty routes list or if any route matches with the modified scope
+                path_match = self.routes == [] or any(
+                    [
+                        route.matches(route_scope)[0] == Match.FULL
+                        for route in self.routes
+                    ]
+                )
+
+                if path_match:
+                    child_scope = {
+                        "path_params": path_params,
+                        "route_root_path": root_path + matched_path,
+                        "route_path": remaining_path,
+                        "endpoint": self.app,
+                    }
+                    return Match.FULL, child_scope
+
+                # Return partial match for 404 handling
+                # This allows for proper 404 handling within the mounted app
+                root = root_path + matched_path
                 child_scope = {
                     "path_params": path_params,
-                    "route_root_path": root_path + matched_path,
+                    "route_root_path": root,
                     "route_path": remaining_path,
                     "endpoint": self.app,
                 }
-                return Match.FULL, child_scope
+                return Match.PARTIAL, child_scope
+
         return Match.NONE, {}
 
     def url_path_for(self, name: str, /, **path_params: typing.Any) -> URLPath:

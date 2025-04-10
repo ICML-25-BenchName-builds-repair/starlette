@@ -114,7 +114,7 @@ class Jinja2Templates:
         directory: "typing.Union[str, PathLike[typing.AnyStr], typing.Sequence[typing.Union[str, PathLike[typing.AnyStr]]]]",  # noqa: E501
         **env_options: typing.Any,
     ) -> "jinja2.Environment":
-        loader = jinja2.FileSystemLoader(directory)
+        loader = jinja2.FileSystemLoader(directory)  # type: ignore
         env_options.setdefault("loader", loader)
         env_options.setdefault("autoescape", True)
 

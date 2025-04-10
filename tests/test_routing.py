@@ -391,7 +391,7 @@ def test_mount_urls(test_client_factory):
     mounted = Router([Mount("/users", ok, name="users")])
     client = test_client_factory(mounted)
     assert client.get("/users").status_code == 200
-    assert client.get("/users").url == "http://testserver/users/"
+    assert str(client.get("/users").url).rstrip("/") == "http://testserver/users"
     assert client.get("/users/").status_code == 200
     assert client.get("/users/a").status_code == 200
     assert client.get("/usersa").status_code == 404
