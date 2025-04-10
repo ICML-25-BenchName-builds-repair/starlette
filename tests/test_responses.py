@@ -18,6 +18,8 @@ from starlette.responses import (
     Response,
     StreamingResponse,
 )
+
+# No need to import test_utils anymore
 from starlette.testclient import TestClient
 from starlette.types import Message
 
@@ -354,8 +356,16 @@ async def test_file_response_with_pathsend(tmpdir: Path):
             assert message["path"] == str(path)
 
     # Since the TestClient doesn't support `pathsend`, we need to test this directly.
+    # The original code was:
+    # await app(
+    #     {"type": "http", "method": "get", "extensions": {"http.response.pathsend", {}}},
+    #     receive,
+    #     send,
+    # )
+    # But this fails with TypeError: unhashable type: 'dict'
+    # So we'll use a dictionary instead
     await app(
-        {"type": "http", "method": "get", "extensions": {"http.response.pathsend", {}}},
+        {"type": "http", "method": "get", "extensions": {"http.response.pathsend": {}}},
         receive,
         send,
     )
