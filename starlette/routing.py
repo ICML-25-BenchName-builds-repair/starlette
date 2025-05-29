@@ -422,25 +422,32 @@ class Mount(BaseRoute):
             root_path = scope.get("route_root_path", scope.get("root_path", ""))
             route_path = scope.get("route_path", re.sub(r"^" + root_path, "", path))
             mount_match = self.path_regex.match(route_path)
-            path_match = self.routes == [] or any(
-                [route.matches(scope)[0] == Match.FULL for route in self.routes]
-            )
-            if mount_match and path_match:
+            if mount_match:
                 matched_params = mount_match.groupdict()
                 for key, value in matched_params.items():
                     matched_params[key] = self.param_convertors[key].convert(value)
                 remaining_path = "/" + matched_params.pop("path")
                 matched_path = route_path[: -len(remaining_path)]
-                path_params = dict(scope.get("path_params", {}))
-                path_params.update(matched_params)
-                root_path = scope.get("root_path", "")
-                child_scope = {
-                    "path_params": path_params,
-                    "route_root_path": root_path + matched_path,
-                    "route_path": remaining_path,
-                    "endpoint": self.app,
-                }
-                return Match.FULL, child_scope
+                
+                # Create a modified scope for checking child routes
+                child_scope_for_match = dict(scope)
+                child_scope_for_match["route_path"] = remaining_path
+                
+                path_match = self.routes == [] or any(
+                    [route.matches(child_scope_for_match)[0] == Match.FULL for route in self.routes]
+                )
+                
+                if path_match:
+                    path_params = dict(scope.get("path_params", {}))
+                    path_params.update(matched_params)
+                    root_path = scope.get("root_path", "")
+                    child_scope = {
+                        "path_params": path_params,
+                        "route_root_path": root_path + matched_path,
+                        "route_path": remaining_path,
+                        "endpoint": self.app,
+                    }
+                    return Match.FULL, child_scope
         return Match.NONE, {}
 
     def url_path_for(self, name: str, /, **path_params: typing.Any) -> URLPath:
